@@ -16,3 +16,4 @@
   color: #333;
 } */
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
