@@ -15,10 +15,6 @@ const isDark = ref(false);
 const updateDarkModeState = () => {
   isDark.value = document.documentElement.classList.contains("dark");
 };
-// 페이지 로드시 초기 다크모드 설정
-const enableDarkMode = () => {
-  updateDarkModeState();
-};
 // 버튼 클릭시 다크모드 토글
 const toggleTheme = () => {
   if (document.documentElement.classList.contains("dark")) {
@@ -30,9 +26,16 @@ const toggleTheme = () => {
   }
   updateDarkModeState();
 };
+// 초기 테마 설정 (localStorage 읽기)
 onMounted(() => {
+  // 로컬에 저장된 테마를 읽어 초기에 적용
+  const savedTheme = localStorage.theme;
+  if (savedTheme === "dark") {
+    document.documentElement.classList.add("dark");
+  } else if (savedTheme === "light") {
+    document.documentElement.classList.remove("dark");
+  }
   updateDarkModeState();
-  enableDarkMode();
 });
 </script>
 
