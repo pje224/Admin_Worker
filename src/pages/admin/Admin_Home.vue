@@ -23,9 +23,8 @@
             class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             :to="link.path"
             :class="{
-              'bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300': isActive(
-                link.path
-              ),
+              'bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300':
+                isActive(link.path),
             }"
           >
             <i :class="[link.icon, 'mr-3']"></i>{{ link.name }}
@@ -79,3 +78,16 @@ const logout = () => {
   router.push("/admin");
 };
 </script>
+
+<style scoped>
+@media (max-width: 768px) {
+  .fixed {
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
+  .ml-64 {
+    margin-left: 0;
+  }
+}
+</style>
