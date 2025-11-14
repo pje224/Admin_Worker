@@ -14,7 +14,7 @@
               {{ card.label }}
             </p>
             <p class="text-3xl font-bold">
-              {{}}
+              {{ card.value }}
               <span v-if="card.suffix">{{ card.suffix }}</span>
             </p>
           </div>
@@ -37,7 +37,7 @@
             :class="[
               'px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ',
               currentFilter === filter.value
-                ? 'bg-indigo-600 text-white'
+                ? 'bg-indigo-600 text-white dark:bg-indigo-800'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
             ]"
           >
@@ -98,31 +98,33 @@
               </th>
             </tr>
           </thead>
-          <tbody class="bg-white dark:bg-gray-600">
+          <tbody class="bg-white dark:bg-gray-600 dark:text-white">
             <tr
               v-for="conversation in filteredConversations"
               :key="conversation.id"
-              class="hover:bg-gray-50 transition-colors"
+              class="hover:bg-gray-50 transition-colors dark:hover:bg-gray-700"
             >
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              <td
+                class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white"
+              >
                 {{ formatDate(conversation.startDate) }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="flex items-center">
                   <p
                     :class="[
-                      'w-10 h-10 rounded-full flex items-center justify-center text-white font-bold',
+                      'w-10 h-10 rounded-full flex items-center justify-center text-white font-bold ',
                       getCustomerAvatarBg(conversation.customerName),
                     ]"
                   >
                     {{ conversation.customerName[0] }}
                   </p>
-                  <span class="ml-3 text-xm text-gray-900">
+                  <span class="ml-3 text-xm text-gray-900 dark:text-white">
                     {{ conversation.customerName }}
                   </span>
                 </div>
               </td>
-              <td class="px-6 py-4 text-sm text-gray-900 max-w-xs">
+              <td class="px-6 py-4 text-sm text-gray-900 max-w-xs dark:text-white">
                 <div class="flex items-center">
                   <span>
                     {{ conversation.lastMessage }}
@@ -138,7 +140,7 @@
               <td class="px-6 py-4 whitespace-nowrap">
                 <span
                   :class="[
-                    'px-2 py-1 text-xs font-medium rounded-full',
+                    'px-2 py-1 text-xs font-medium rounded-full ',
                     conversation.status === 'active'
                       ? 'bg-green-100 text-green-800'
                       : conversation.status === 'waiting'
@@ -149,8 +151,14 @@
                   {{ getStatusText(conversation.status) }}
                 </span>
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                {{ conversation.responseTime }}분
+              <td
+                class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white"
+              >
+                {{
+                  conversation.responseTime === null
+                    ? "미응답"
+                    : `${conversation.responseTime}분`
+                }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="flex items-center">
@@ -164,7 +172,9 @@
                       ]"
                     ></i>
                   </div>
-                  <span v-if="conversation.rating" class="ml-2 text-xs text-gray-600"
+                  <span
+                    v-if="conversation.rating"
+                    class="ml-2 text-xs text-gray-600 dark:text-gray-400"
                     >({{ conversation.rating }})</span
                   >
                   <span v-else class="ml-2 text-xs text-gray-400">미평가</span>
@@ -173,7 +183,7 @@
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 <button
                   @click="openConversation(conversation)"
-                  class="cursor-pointer text-indigo-600 hover:text-indigo-900"
+                  class="cursor-pointer text-indigo-600 hover:text-indigo-900 dark:text-indigo-200 dark:hover:text-indigo-400"
                 >
                   <i class="fas fa-comment-dots mr-1"></i>
                   대화 보기
@@ -183,13 +193,20 @@
           </tbody>
         </table>
       </div>
+      <!-- 빈 상태일때 -->
+      <div v-if="filteredConversations.length === 0" class="text-center py-12">
+        <i class="fas fa-comments text-6xl text-gray-300 mb-4"></i>
+        <p class="text-gray-500 text-lg">대화 내역이 없습니다.</p>
+      </div>
     </div>
     <!-- 대화 상세 모달 -->
     <div
       v-if="selectedConversation"
       class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4"
     >
-      <div class="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] flex flex-col">
+      <div
+        class="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] flex flex-col dark:bg-gray-600"
+      >
         <div class="p-6 border-b flex justify-between items-center">
           <!-- 사용자 정보 -->
           <div class="flex items-center">
@@ -205,34 +222,36 @@
               <h3 class="text-xl font-bold">
                 {{ selectedConversation.customerName }}
               </h3>
-              <p class="text-sm text-gray-500">
+              <p class="text-sm text-gray-500 dark:text-gray-400">
                 {{ selectedConversation.email }}
               </p>
             </div>
           </div>
           <!-- 닫기 버튼 -->
           <button
-            class="text-gray-400 hover:text-gray-600 cursor-pointer"
+            class="text-gray-400 hover:text-gray-600 cursor-pointer dark:text-gray-200 dark:hover:text-gray-400"
             @click="selectedConversation = null"
           >
             <i class="fas fa-times text-2xl"></i>
           </button>
         </div>
         <!-- 대화 내용 -->
-        <div class="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50">
+        <div class="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50 dark:bg-gray-600">
           <div
             v-for="message in conversationMessages"
             :key="message.id"
             :class="[
-              'flex',
+              'flex ',
               message.sender === 'customer' ? 'justify-start' : 'justify-end',
             ]"
           >
             <!-- 메세지 정렬 및 데이터 확인 -->
             <div
               :class="[
-                'max-w-lg',
-                message.sender === 'customer' ? 'bg-white' : 'bg-indigo-600 text-white',
+                'max-w-lg dark:bg-gray-800',
+                message.sender === 'customer'
+                  ? 'bg-white'
+                  : 'bg-indigo-600 text-white dark:bg-indigo-800',
                 'rounded-lg p-4 shadow-sm',
               ]"
             >
@@ -251,7 +270,7 @@
           </div>
         </div>
         <!-- 대화 입력 및 답변 -->
-        <div class="p-6 border-t bg-white">
+        <div class="p-6 border-t bg-white dark:bg-gray-600">
           <div class="flex flex-col md:flex-row md:items-center gap-3">
             <input
               type="text"
@@ -331,7 +350,7 @@ const stateCards = computed(() => [
   {
     id: "total",
     label: "전체 대화",
-    // value: totalConversations.value,
+    value: totalConversations.value,
     suffix: "",
     labelClass: "text-blue-100",
     backgroundClass: "bg-gradient-to-br from-blue-500 to-blue-600",
@@ -341,7 +360,7 @@ const stateCards = computed(() => [
   {
     id: "active",
     label: "활성 대화",
-    // value: activeConversations.value,
+    value: activeConversations.value,
     suffix: "",
     labelClass: "text-green-100",
     backgroundClass: "bg-gradient-to-br from-green-500 to-green-600",
@@ -351,7 +370,7 @@ const stateCards = computed(() => [
   {
     id: "avg-response",
     label: "평균 응답 시간",
-    // // value: avgResponseTime.value,
+    value: avgResponseTime.value,
     suffix: "m",
     labelClass: "text-yellow-100",
     backgroundClass: "bg-gradient-to-br from-yellow-500 to-yellow-600",
@@ -361,7 +380,7 @@ const stateCards = computed(() => [
   {
     id: "satisfaction",
     label: "만족도",
-    // // value: satisfactionRate.value,
+    value: satisfactionRate.value,
     suffix: "%",
     labelClass: "text-purple-100",
     backgroundClass: "bg-linear-to-br from-purple-500 to-purple-600",
@@ -369,6 +388,28 @@ const stateCards = computed(() => [
     iconColor: "text-purple-500",
   },
 ]);
+
+const totalConversations = computed(() => conversations.value.length);
+const activeConversations = computed(
+  () => conversations.value.filter((c) => c.status === "active").length
+);
+const avgResponseTime = computed(() => {
+  const times = conversations.value.map((c) => c.responseTime).filter((t) => t !== null);
+  if (times.length === 0) return 0;
+  // reduce() - 배열의 모든 요소를 더하는 함수
+  return Math.round(times.reduce((a, b) => a + b, 0) / times.length);
+});
+const satisfactionRate = computed(() => {
+  const ratings = conversations.value.map((c) => c.rating).filter((r) => r !== null);
+  // console.log(ratings);
+  if (ratings.length === 0) return 0;
+  return Math.round(
+    ratings.reduce((a, b) => {
+      // console.log(a, b);
+      return a + b;
+    }, 0) / ratings.length
+  );
+});
 
 const filters = [
   { label: "전체", value: "all", icon: "fas fa-list" },
@@ -383,7 +424,7 @@ const conversations = ref([
     id: 1,
     customerName: "김철수",
     email: "kim@example.com",
-    startDate: new Date("2025-11-10"),
+    startDate: new Date("2025-11-12"),
     lastMessage: "감사합니다. 다음에도 이용하겠습니다!",
     status: "closed",
     responseTime: 15,
@@ -394,7 +435,7 @@ const conversations = ref([
     id: 2,
     customerName: "이영희",
     email: "lee@example.com",
-    startDate: new Date("2025-11-09"),
+    startDate: new Date("2025-11-13"),
     lastMessage: "청소 후 확인을 받아볼 수 있나요?",
     status: "active",
     responseTime: 8,
@@ -405,7 +446,7 @@ const conversations = ref([
     id: 3,
     customerName: "박민수",
     email: "park@example.com",
-    startDate: new Date("2025-11-12"),
+    startDate: new Date("2025-11-14"),
     lastMessage: "혹시 시간 변경이 가능한가요?",
     status: "waiting",
     responseTime: null,
@@ -420,42 +461,42 @@ const allMessages = ref([
     conversationId: 1,
     sender: "customer",
     content: "청소 잘 해주셔서 감사합니다!",
-    timestamp: new Date("2025-11-11T10:30:00"),
+    timestamp: new Date("2025-11-12T10:30:00"),
   },
   {
     id: 2,
     conversationId: 1,
     sender: "admin",
     content: "감사합니다! 다음에도 이용해주세요.",
-    timestamp: new Date("2025-11-10T10:45:00"),
+    timestamp: new Date("2025-11-12T10:45:00"),
   },
   {
     id: 3,
     conversationId: 2,
     sender: "customer",
     content: "청소는 언제 시작되나요?",
-    timestamp: new Date("2025-11-11T09:00:00"),
+    timestamp: new Date("2025-11-13T09:00:00"),
   },
   {
     id: 4,
     conversationId: 2,
     sender: "admin",
     content: "예약하신 시간인 오후 2시에 시작됩니다.",
-    timestamp: new Date("2025-11-10T09:15:00"),
+    timestamp: new Date("2025-11-13T09:15:00"),
   },
   {
     id: 5,
     conversationId: 2,
     sender: "customer",
     content: "청소 후 확인을 받아볼 수 있나요?",
-    timestamp: new Date("2025-11-12T14:30:00"),
+    timestamp: new Date("2025-11-13T14:30:00"),
   },
   {
     id: 6,
     conversationId: 3,
     sender: "customer",
     content: "혹시 시간 변경이 가능한가요?",
-    timestamp: new Date("2025-11-11T08:00:00"),
+    timestamp: new Date("2025-11-14T08:00:00"),
   },
 ]);
 // 새로운 메세지를 추가할 때 id 값을 증가 시키기 위해
@@ -547,6 +588,10 @@ function sendMessage() {
     timestamp: new Date(),
   };
   allMessages.value.push(message);
+  selectedConversation.value.lastMessage = message.content;
+  selectedConversation.value.responseTime = Math.round(
+    (new Date() - selectedConversation.value.startDate) / 1000 / 60
+  );
   newMessage.value = "";
   // console.log(allMessages.value);
 }
