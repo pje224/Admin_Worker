@@ -67,9 +67,72 @@
         </select>
       </div>
     </div>
-    <div class="text-center text-gray-500 dark:text-gray-400 text-sm py-6">
-      일정이 없습니다
+    <div
+      v-if="filteredJobsSelected.length === 0"
+      class="text-center text-gray-500 dark:text-gray-400 text-sm py-6"
+    >
+      일정이 없습니다.
     </div>
+    <ul class="spce-y-2">
+      <li
+        v-for="job in filteredJobsSelected"
+        :key="job.id"
+        class="rounded-xl border border-gray-200 dark:border-gray-700 p-3 bg-white dark:bg-gray-800"
+      >
+        <div class="flex items-start gap-3">
+          <div
+            class="w-9 h-9 rounded-lg flex items-center justify-center text-xs font-bold"
+            :class="
+              job.type === 'luggage'
+                ? 'bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300'
+                : 'bg-teal-100 dark:bg-teal-900/50 text-teal-700 dark:text-teal-300'
+            "
+          >
+            {{ job.type === "luggage" ? "수" : "제" }}
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-semibold truncate text-gray-900 dark:text-white">
+              {{ job.customerName }}
+              <span class="text-gray-400 dark:text-gray-500">{{ job.time }}</span>
+            </p>
+            <p class="text-xs text-gray-600 dark:text-gray-400 truncate">
+              {{ job.address }}
+            </p>
+            <div class="mt-2 flex items-center gap-1.5">
+              <span
+                class="text-[10px] px-1.5 py-0.5 rounded-full"
+                :class="statusClass(job.status)"
+                >{{ statusText(job.status) }}</span
+              >
+              <span
+                v-if="job.memo"
+                class="text-[10px] px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-600"
+                >메모 {{ job.memo }}</span
+              >
+            </div>
+          </div>
+        </div>
+        <div class="mt-3 grid grid-cols-3 gap-2 text-xs">
+          <a
+            :href="`tel:${job.phone}`"
+            class="py-2 rounded-lg bg-blue-600 text-white text-center"
+            >전화</a
+          >
+          <a
+            :href="mapLink(job.address)"
+            target="_blank"
+            class="py-2 rounded-lg bg-gray-100 text-gray-700 text-center"
+            >길찾기</a
+          >
+          <button
+            @click="advance(job)"
+            class="py-2 rounded-lg bg-yellow-500 text-white text-center"
+          >
+            상태변경
+          </button>
+        </div>
+      </li>
+    </ul>
   </div>
 </template>
 
@@ -207,6 +270,62 @@ const selectedDateLabel = computed(() => {
   const d = selectedDate.value;
   return `${d.getMonth() + 1}월 ${d.getDate()}일`;
 });
+// 작업 상태
+const jobsSelected = computed(() => {
+  const key = fmtKey(selectedDate.value);
+  return jobs.value.filter((j) => {
+    return j.date === key;
+  });
+});
+// 작업 상태 필터링
+const filteredJobsSelected = computed(() => {
+  if (statusFilter.value === "all") return jobsSelected.value;
+  return jobsSelected.value.filter((j) => j.status === statusFilter.value);
+});
+// 작업 상태 글자 변경
+function statusText(status) {
+  switch (status) {
+    case "scheduled":
+      return "예약";
+    case "onroute":
+      return "이동중";
+    case "working":
+      return "작업중";
+    case "done":
+      return "완료";
+    default:
+      return status;
+  }
+}
+// 상태 변경 css
+function statusClass(status) {
+  switch (status) {
+    case "scheduled":
+      return "bg-blue-50 text-blue-700";
+    case "onroute":
+      return "bg-yellow-50 text-yellow-700";
+    case "working":
+      return "bg-orange-50 text-orange-700";
+    case "done":
+      return "bg-green-50 text-green-700";
+    default:
+      return "bg-gray-50 text-gray-700";
+  }
+}
+// 길찾기
+function mapLink(address) {
+  // encodeURIComponent() 문자열을 URL 인코딩하는 메서드
+  const q = encodeURIComponent(address);
+  return `http://map.kakao.com/?q=${q}`;
+}
+// 상태 변경
+function advance(job) {
+  const order = ["scheduled", "onroute", "working", "done"];
+  const idx = order.indexOf(job.status);
+  // console.log(idx);
+  job.status = order[(idx + 1) % order.length];
+  // console.log(job.status);
+}
 </script>
 
 <style scoped></style>
