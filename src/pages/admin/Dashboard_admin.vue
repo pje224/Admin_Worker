@@ -54,11 +54,17 @@
           </div>
         </div>
       </div>
+      <!-- 스크립트에서 대문자 > 하이픈(-)으로 대체 -->
       <SearchTable
         :data="filteredReservations"
         search-place-holder="고객명 또는 예약번호로 검색.."
         :filter-options="dashboardFilterOptions"
         :search-fields="['customerName', 'id']"
+        table-title="예약 목록"
+        :columns="reserColumns"
+        :items-per-page="itemsPerPage"
+        totallabel="건의 예약"
+        :filter-fn="dashFilterFn"
       />
     </div>
     <!-- 기사현황 -->
@@ -265,4 +271,58 @@ const dashboardFilterOptions = [
     ],
   },
 ];
+// 테이블 칼럼 정의
+const reserColumns = [
+  { label: "예약번호", key: "id" },
+  { label: "고객명", key: "customerName" },
+  { label: "청소유형", key: "type" },
+  {
+    label: "예약일시",
+    key: "date",
+
+    render: (item) => formatDate(item.date),
+  },
+  {
+    label: "상태",
+    key: "status",
+    render: (item) =>
+      `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusClass(item.status)}">${
+        item.status
+      }</span>`,
+  },
+  { label: "담당기사", key: "worker" },
+  {
+    label: "액션",
+    key: "action",
+    render: (item) =>
+      `<button onclick="window.handleReservationClick('${item.id}')" class="cursor-pointer text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 mr-3"><i class="fa-solid fa-eye mr-1"></i> 상세</button>`,
+  },
+];
+// 날짜 포맷 변경 함수
+const formatDate = (date) => {
+  return new Date(date).toLocaleDateString("ko-KR", {
+    year: "numeric", // 년도
+    month: "long", // 월 (한글 월 이름)
+    day: "numeric", // 일
+    weekday: "long", // 요일 (한글 요일 이름)
+  });
+};
+
+// 커스텀 필터 함수 (날짜 범위 포함)
+const dashFilterFn = (data, filters) => {
+  let result = [...data];
+  // console.log(result);
+  // console.log(filters);
+
+  // 서비스 필터링
+  if (filters.serviceType && filters.serviceType !== "all") {
+    result = result.filter((reser) => reser.type === filters.serviceType);
+  }
+
+  // 접수 상태 필터링
+  if (filters.receiptStatus && filters.receiptStatus !== "all") {
+    result = result.filter((reser) => reser.status === filters.receiptStatus);
+  }
+  return result;
+};
 </script>
