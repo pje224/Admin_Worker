@@ -1,17 +1,18 @@
 <template>
   <div class="space-y-6 bg-white text-black dark:bg-black dark:text-white p-4 rounded">
     <h1 class="text-3xl font-bold text-gray-800 dark:text-white">기사관리</h1>
-    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-      기사 정보를 관리하고 상태를 확인할 수 있습니다.
-    </p>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">기사 정보를 관리하고 상태를 확인할 수 있습니다.</p>
     <!-- 통계카드 -->
     <DashboardStates :states="states" />
+    <!-- 기사 현황 -->
+    <Worker_dash />
   </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
 import DashboardStates from "../../components/DashboardStates.vue";
+import Worker_dash from "@/components/Worker_dash.vue";
 
 const states = ref([
   {
