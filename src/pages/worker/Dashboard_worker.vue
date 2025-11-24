@@ -28,7 +28,7 @@
     </header>
     <!-- 메인 -->
     <main
-      class="bg-gray-100 overflow-y-auto overflow-x-hidden w-full max-h-[calc(100vh-68px)] pt-[116px] dark:bg-gray-600"
+      class="bg-gray-100 overflow-y-auto overflow-x-hidden w-full max-h-[calc(100vh-68px)] pt-32 dark:bg-gray-600"
     >
       <router-view></router-view>
     </main>

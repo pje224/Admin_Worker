@@ -10,15 +10,18 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import DashboardStates from "../../components/DashboardStates.vue";
 import Worker_dash from "@/components/Worker_dash.vue";
+import { workersData } from "@/data/workers";
 
-const states = ref([
+const Workers = ref([...workersData]);
+
+const states = computed(() => [
   {
     title: "전체 기사",
-    // value: `${worker_name.value.length}명`,
-    value: "15명",
+    value: `${Workers.value.length}명`,
+    // value: "15명",
     change: "+3명",
     icon: "fas fa-user-tie",
     bg: "bg-blue-100 dark:bg-blue-900",
@@ -26,7 +29,7 @@ const states = ref([
   },
   {
     title: "활동중",
-    value: "4명",
+    value: `${Workers.value.filter((w) => w.status === "활동중").length}명`,
     change: "+1명",
     icon: "fas fa-check-circle",
     bg: "bg-green-100 dark:bg-green-900",
@@ -34,7 +37,10 @@ const states = ref([
   },
   {
     title: "평균 평점",
-    value: "4.6",
+    value:
+      Workers.value.length > 0
+        ? (Workers.value.reduce((sum, w) => sum + w.rating, 0) / Workers.value.length).toFixed(1)
+        : "0.0",
     change: "+0.1",
     icon: "fas fa-star",
     bg: "bg-yellow-100 dark:bg-yellow-900",
@@ -42,5 +48,3 @@ const states = ref([
   },
 ]);
 </script>
-
-<style scoped></style>

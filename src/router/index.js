@@ -9,6 +9,7 @@ import Settings from "@/pages/admin/Settings.vue";
 import Worker_admin from "@/pages/admin/Worker_admin.vue";
 import Calendar from "@/pages/worker/Calendar.vue";
 import Dashboard_worker from "@/pages/worker/Dashboard_worker.vue";
+import Detail from "@/pages/worker/Detail.vue";
 import Jobs from "@/pages/worker/Jobs.vue";
 import Login_worker from "@/pages/worker/Login_worker.vue";
 import Payment from "@/pages/worker/Payment.vue";
@@ -46,6 +47,8 @@ const routes = [
       { path: "jobs", component: Jobs, name: "MobileJobs" },
       { path: "calendar", component: Calendar, name: "MobileCalendar" },
       { path: "payment", component: Payment, name: "MobilePayment" },
+      // 쿼리 파라미터로 활용해서 이동할때🔽
+      { path: "detail/:id?", component: Detail, name: "WorkerDetail" },
     ],
   },
 ];
