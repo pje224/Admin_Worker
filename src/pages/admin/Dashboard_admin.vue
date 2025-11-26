@@ -61,7 +61,7 @@
         :filter-options="dashboardFilterOptions"
         :search-fields="['customerName', 'id']"
         table-title="예약 목록"
-        :columns="reserColumns"
+        :columns="reserveColumns"
         :items-per-page="itemsPerPage"
         totallabel="건의 예약"
         :filter-fn="dashFilterFn"
@@ -428,7 +428,7 @@ const dashboardFilterOptions = [
   },
 ];
 // 테이블 칼럼 정의
-const reserColumns = [
+const reserveColumns = [
   { label: "예약번호", key: "id" },
   { label: "고객명", key: "customerName" },
   { label: "청소유형", key: "type" },
@@ -501,12 +501,12 @@ const dashFilterFn = (data, filters) => {
 
   // 서비스 필터링
   if (filters.serviceType && filters.serviceType !== "all") {
-    result = result.filter((reser) => reser.type === filters.serviceType);
+    result = result.filter((reserve) => reserve.type === filters.serviceType);
   }
 
   // 접수 상태 필터링
   if (filters.receiptStatus && filters.receiptStatus !== "all") {
-    result = result.filter((reser) => reser.status === filters.receiptStatus);
+    result = result.filter((reserve) => reserve.status === filters.receiptStatus);
   }
   return result;
 };
